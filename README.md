@@ -32,7 +32,7 @@ npm install @blakeembrey/deque --save
 * `rotate(n=1)` Rotate the deque `n` steps to the right.
 
 ```js
-import { Deque } from '@blakeembrey/collections'
+import { Deque } from '@blakeembrey/deque'
 
 const d = new Deque('ghi')
 
