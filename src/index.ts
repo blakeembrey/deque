@@ -1,62 +1,56 @@
-export class Node<T> {
-  value: T
-  next: Node<T>
-  prev: Node<T>
-
-  constructor(value: T) {
-    this.value = value
-    // Allow a circular node to be created.
-    this.next = this
-    this.prev = this
-  }
-
-  append(node: Node<T>) {
-    node.next = this.next
-    this.next.prev = node
-    node.prev = this
-    this.next = node
-  }
-
-  detach() {
-    this.next.prev = this.prev
-    this.prev.next = this.next
-    this.next = this
-    this.prev = this
-  }
-}
-
 export class Deque<T> {
-  head: Node<T> | undefined
+  head = 0
+  tail = 0
+  mask = 3
+  list = new Array(4)
 
   constructor(values?: Iterable<T>) {
     if (values) this.extend(values)
   }
 
+  _grow() {
+    this._sort()
+    this.list.length *= 2
+    this.mask = (this.mask << 1) | 1
+  }
+
+  _shrink() {
+    this._sort()
+    this.list.length /= 2
+    this.mask = this.mask >>> 1
+  }
+
+  private _sort() {
+    const { list, head, tail, mask } = this
+    const size = head === tail ? list.length : (tail - head) & mask
+
+    this.head = 0
+    this.tail = size
+
+    if (head === 0) return
+
+    const sorted: T[] = new Array(mask + 1)
+    for (let i = 0; i < size; i++) sorted[i] = list[(head + i) & mask]
+    this.list = sorted
+  }
+
   push(value: T): this {
-    const node = new Node(value)
-
-    if (this.head) {
-      // Append to "tail".
-      this.head.prev.append(node)
-    } else {
-      // First item is always "head".
-      this.head = node
-    }
-
+    this.list[this.tail] = value
+    this.tail = (this.tail + 1) & this.mask
+    if (this.tail === this.head) this._grow()
     return this
   }
 
   pushLeft(value: T): this {
-    const node = new Node(value)
-    // Append to end of list.
-    if (this.head) this.head.prev.append(node)
-    // Rotate list to start at current node ("left").
-    this.head = node
+    this.head = (this.head - 1) & this.mask
+    this.list[this.head] = value
+    if (this.head === this.tail) this._grow()
     return this
   }
 
   clear() {
-    this.head = undefined
+    this.head = 0
+    this.tail = 0
   }
 
   extend(values: Iterable<T>) {
@@ -68,164 +62,131 @@ export class Deque<T> {
   }
 
   peek(index: number) {
-    let item = this.head
-    let i = 0
+    const { head, size, tail, list } = this
 
-    if (!item) throw new RangeError('deque index out of range')
-    if (index === 0) return item.value
-
-    if (index > 0) {
-      while (i < index) {
-        item = item.next
-        if (item === this.head) break
-        i += 1
-      }
-    } else {
-      while (i > index) {
-        item = item.prev
-        i -= 1
-        if (item === this.head) break
-      }
+    if ((index | 0) !== index || index >= size || index < -size) {
+      throw new RangeError('deque index out of range')
     }
 
-    if (i !== index) throw new RangeError('deque index out of range')
-
-    return item.value
+    const pos = ((index >= 0 ? head : tail) + index) & this.mask
+    return list[pos]
   }
 
   indexOf(needle: T) {
-    let index = 0
+    const { head, list, size, mask } = this
 
-    for (const value of this.values()) {
-      if (value === needle) return index
-      index += 1
+    for (let i = 0; i < size; i++) {
+      if (list[(head + i) & mask] === needle) return i
     }
 
     return -1
   }
 
   has(needle: T) {
-    for (const value of this.values()) {
-      if (value === needle) return true
+    const { head, list, size, mask } = this
+
+    for (let i = 0; i < size; i++) {
+      if (list[(head + i) & mask] === needle) return true
     }
 
     return false
   }
 
   insert(index: number, value: T) {
-    const node = new Node(value)
-    let item = this.head
+    const pos = (this.head + index) & this.mask
+    let cur = this.tail
 
-    if (!item) {
-      this.head = node
-      return this
+    // Increase tail position by 1.
+    this.tail = (this.tail + 1) & this.mask
+
+    // Shift items forward 1 to make space for insert.
+    while (cur !== pos) {
+      const prev = (cur - 1) & this.mask
+      this.list[cur] = this.list[prev]
+      cur = prev
     }
 
-    // Update `head` pointer when inserting as first element.
-    if (index === 0) this.head = node
-
-    for (let i = 0; i < index; i++) {
-      item = item.next
-      if (item === this.head) break
-    }
-
-    item.prev.append(node)
+    this.list[pos] = value
+    if (this.head === this.tail) this._grow()
     return this
+  }
+
+  get size() {
+    return (this.tail - this.head) & this.mask
   }
 
   pop() {
-    const head = this.head
+    if (this.head === this.tail) throw new RangeError('pop from an empty deque')
 
-    if (!head) throw new RangeError('pop from an empty deque')
-
-    if (head.prev === head) {
-      this.head = undefined
-      return head.value
-    }
-
-    const prev = head.prev
-    prev.detach()
-    return prev.value
+    this.tail = (this.tail - 1) & this.mask
+    const value = this.list[this.tail]
+    this.list[this.tail] = undefined
+    if (this.size <= this.list.length >>> 2) this._shrink()
+    return value
   }
 
   popLeft() {
-    const head = this.head
+    if (this.head === this.tail) throw new RangeError('pop from an empty deque')
 
-    if (!head) throw new RangeError('pop from an empty deque')
-
-    if (head.prev === head) {
-      this.head = undefined
-      return head.value
-    }
-
-    const next = head.next
-    head.detach()
-    this.head = next
-    return head.value
+    const value = this.list[this.head]
+    this.list[this.head] = undefined
+    this.head = (this.head + 1) & this.mask
+    if (this.size <= this.list.length >>> 2) this._shrink()
+    return value
   }
 
   delete(index: number) {
-    let item = this.head
-
-    if (!item || index < 0) throw new RangeError('deque index out of range')
-
-    // Update `head` pointer when removing first element.
-    if (index === 0) this.head = item.next
-
-    for (let i = 0; i < index; i++) {
-      item = item.next
-      if (item === this.head) throw new RangeError('deque index out of range')
+    if (index >= this.size || index < 0) {
+      throw new RangeError('deque index out of range')
     }
 
-    item.detach()
+    const pos = (this.head + index) & this.mask
+    let cur = pos
 
-    return item.value
+    // Shift items backward 1 to erase position.
+    while (cur !== this.tail) {
+      const next = (cur + 1) & this.mask
+      this.list[cur] = this.list[next]
+      cur = next
+    }
+
+    // Decrease tail position by 1.
+    this.tail = (this.tail - 1) & this.mask
+
+    if (this.size <= this.list.length >>> 2) this._shrink()
+
+    return this
   }
 
   reverse() {
-    const head = this.head
-    let item = head
+    const { head, tail, size, list, mask } = this
 
-    if (!item) return
+    for (let i = 0; i < ~~(size / 2); i++) {
+      const from = (head + i) & mask
+      const to = (tail - i - 1) & mask
 
-    while (true) {
-      const next: Node<T> = item.next
-      item.next = item.prev
-      item.prev = next
-      if (next === head) break
-      item = next
+      const temp = list[from]
+      list[from] = list[to]
+      list[to] = temp
     }
-
-    this.head = item
-
-    return this
   }
 
   rotate(n = 1) {
-    let item = this.head
+    const { head, tail } = this
 
-    if (!item) return this
+    if (n === 0 || head === tail) return
 
     if (n > 0) {
-      for (let i = 0; i < n; i++) item = item.prev
+      for (let i = 0; i < n; i++) this.pushLeft(this.pop())
     } else {
-      for (let i = 0; i > n; i--) item = item.next
+      for (let i = 0; i > n; i--) this.push(this.popLeft())
     }
-
-    this.head = item
-
-    return this
   }
 
   *values() {
-    let item = this.head
+    const { head, size, list, mask } = this
 
-    if (!item) return
-
-    do {
-      yield item.value
-      item = item.next
-    } while (item !== this.head)
+    for (let i = 0; i < size; i++) yield list[(head + i) & mask]
   }
 
   [Symbol.iterator]() {

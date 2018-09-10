@@ -145,6 +145,7 @@ describe('clear', () => {
     d.clear()
 
     expect(Array.from(d)).toEqual([])
+    expect(() => d.peek(0)).toThrow(RangeError)
   })
 })
 
@@ -180,6 +181,18 @@ describe('insert', () => {
     d.insert(0, 'a')
 
     expect(Array.from(d)).toEqual(Array.from('abcd'))
+  })
+
+  it('should insert at the tail each time', () => {
+    const d = new Deque()
+
+    d.insert(0, 'a')
+    d.insert(1, 'b')
+    d.insert(2, 'c')
+    d.insert(3, 'd')
+    d.insert(4, 'e')
+
+    expect(Array.from(d)).toEqual(Array.from('abcde'))
   })
 })
 
@@ -229,6 +242,16 @@ describe('reverse', () => {
 
     expect(Array.from(d)).toEqual(['a'])
   })
+
+  it('should reverse a rotated deque', () => {
+    const d = new Deque('abcdefghi')
+
+    d.rotate(5)
+    expect(Array.from(d)).toEqual(Array.from('efghiabcd'))
+
+    d.reverse()
+    expect(Array.from(d)).toEqual(Array.from('dcbaihgfe'))
+  })
 })
 
 describe('rotate', () => {
@@ -254,5 +277,17 @@ describe('rotate', () => {
     d.rotate()
 
     expect(Array.from(d)).toEqual([])
+  })
+})
+
+describe('size', () => {
+  it('should give the deque size', () => {
+    const d = new Deque('abcdef')
+
+    expect(d.size).toEqual(6)
+
+    d.rotate(3)
+
+    expect(d.size).toEqual(6)
   })
 })

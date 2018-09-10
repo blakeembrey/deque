@@ -19,10 +19,10 @@ suite
     deque.rotate(1)
   })
   .add('denque', () => {
-    denque.push(denque.pop())
+    denque.unshift(denque.pop())
   })
   .add('double-ended-queue', () => {
-    doubleEndedQueue.push(doubleEndedQueue.pop())
+    doubleEndedQueue.unshift(doubleEndedQueue.pop())
   })
   .on('cycle', (e: any) => {
     console.log('' + e.target)

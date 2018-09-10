@@ -66,6 +66,10 @@ d //=> deque(['g', 'h', 'i', 'j', 'k', 'l'])
 
 This project uses [TypeScript](https://github.com/Microsoft/TypeScript) and publishes definitions on NPM.
 
+## Reference
+
+Circular array implementation based on [`denque`](https://github.com/Salakar/denque).
+
 ## License
 
 Apache 2.0
