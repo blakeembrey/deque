@@ -8,13 +8,13 @@ export class Deque<T> {
     if (values) this.extend(values)
   }
 
-  _grow() {
+  private _grow() {
     this._sort()
     this.list.length *= 2
     this.mask = (this.mask << 1) | 1
   }
 
-  _shrink() {
+  private _shrink() {
     this._sort()
     this.list.length /= 2
     this.mask = this.mask >>> 1
@@ -162,12 +162,12 @@ export class Deque<T> {
     const { head, tail, size, list, mask } = this
 
     for (let i = 0; i < ~~(size / 2); i++) {
-      const from = (head + i) & mask
-      const to = (tail - i - 1) & mask
+      const a = (tail - i - 1) & mask
+      const b = (head + i) & mask
 
-      const temp = list[from]
-      list[from] = list[to]
-      list[to] = temp
+      const temp = this.list[a]
+      this.list[a] = this.list[b]
+      this.list[b] = temp
     }
   }
 
@@ -176,10 +176,25 @@ export class Deque<T> {
 
     if (n === 0 || head === tail) return
 
+    this.head = (head - n) & this.mask
+    this.tail = (tail - n) & this.mask
+
     if (n > 0) {
-      for (let i = 0; i < n; i++) this.pushLeft(this.pop())
+      for (let i = 1; i <= n; i++) {
+        const a = (head - i) & this.mask
+        const b = (tail - i) & this.mask
+
+        this.list[a] = this.list[b]
+        this.list[b] = undefined
+      }
     } else {
-      for (let i = 0; i > n; i--) this.push(this.popLeft())
+      for (let i = 0; i > n; i--) {
+        const a = (tail - i) & this.mask
+        const b = (head - i) & this.mask
+
+        this.list[a] = this.list[b]
+        this.list[b] = undefined
+      }
     }
   }
 
