@@ -1,28 +1,27 @@
 export class Deque<T> {
-  head = 0
-  tail = 0
-  mask = 3
-  list = new Array(4)
+  private head = 0
+  private tail = 0
+  private mask = 1
+  private list = new Array(2)
 
   constructor(values?: Iterable<T>) {
     if (values) this.extend(values)
   }
 
   private _grow() {
-    this._sort()
+    this._sort(this.list.length)
     this.list.length *= 2
     this.mask = (this.mask << 1) | 1
   }
 
   private _shrink() {
-    this._sort()
+    this._sort(this.size)
     this.list.length /= 2
     this.mask = this.mask >>> 1
   }
 
-  private _sort() {
-    const { list, head, tail, mask } = this
-    const size = head === tail ? list.length : (tail - head) & mask
+  private _sort(size: number) {
+    const { head, mask } = this
 
     this.head = 0
     this.tail = size
@@ -30,7 +29,7 @@ export class Deque<T> {
     if (head === 0) return
 
     const sorted: T[] = new Array(mask + 1)
-    for (let i = 0; i < size; i++) sorted[i] = list[(head + i) & mask]
+    for (let i = 0; i < size; i++) sorted[i] = this.list[(head + i) & mask]
     this.list = sorted
   }
 
@@ -121,7 +120,7 @@ export class Deque<T> {
     this.tail = (this.tail - 1) & this.mask
     const value = this.list[this.tail]
     this.list[this.tail] = undefined
-    if (this.size <= this.list.length >>> 2) this._shrink()
+    if (this.size < this.mask >>> 1) this._shrink()
     return value
   }
 
@@ -131,7 +130,7 @@ export class Deque<T> {
     const value = this.list[this.head]
     this.list[this.head] = undefined
     this.head = (this.head + 1) & this.mask
-    if (this.size <= this.list.length >>> 2) this._shrink()
+    if (this.size < this.mask >>> 1) this._shrink()
     return value
   }
 
@@ -153,7 +152,7 @@ export class Deque<T> {
     // Decrease tail position by 1.
     this.tail = (this.tail - 1) & this.mask
 
-    if (this.size <= this.list.length >>> 2) this._shrink()
+    if (this.size < this.mask >>> 1) this._shrink()
 
     return this
   }

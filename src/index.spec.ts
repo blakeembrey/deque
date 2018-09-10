@@ -209,6 +209,11 @@ describe('delete', () => {
 
     expect(Array.from(d)).toEqual(Array.from('c'))
     expect(() => d.delete(1)).toThrowError(RangeError)
+
+    d.delete(0)
+
+    expect(Array.from(d)).toEqual([])
+    expect(() => d.delete(0)).toThrowError(RangeError)
   })
 
   it('should throw when deleting empty deque', () => {
@@ -289,5 +294,31 @@ describe('size', () => {
     d.rotate(3)
 
     expect(d.size).toEqual(6)
+  })
+})
+
+describe('array resize', () => {
+  it('should resize array as required', () => {
+    const d = new Deque()
+    d.extend('abcd')
+
+    expect(d.pop()).toEqual('d')
+    expect(d.pop()).toEqual('c')
+    expect(d.pop()).toEqual('b')
+    expect(d.pop()).toEqual('a')
+    expect(() => d.pop()).toThrow(RangeError)
+
+    d.extend('efgh')
+    d.extend('ijkl')
+
+    expect(d.popLeft()).toEqual('e')
+    expect(d.popLeft()).toEqual('f')
+    expect(d.popLeft()).toEqual('g')
+    expect(d.popLeft()).toEqual('h')
+    expect(d.popLeft()).toEqual('i')
+    expect(d.popLeft()).toEqual('j')
+    expect(d.popLeft()).toEqual('k')
+    expect(d.popLeft()).toEqual('l')
+    expect(() => d.popLeft()).toThrow(RangeError)
   })
 })
