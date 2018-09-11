@@ -73,12 +73,9 @@ export class Deque<T> {
 
   indexOf(needle: T, start = 0) {
     const { head, list, size, mask } = this
+    const offset = start >= 0 ? start : start < -size ? 0 : size + start
 
-    if (start >= size || start < 0) {
-      throw new RangeError('deque index out of range')
-    }
-
-    for (let i = start; i < size; i++) {
+    for (let i = offset; i < size; i++) {
       if (list[(head + i) & mask] === needle) return i
     }
 

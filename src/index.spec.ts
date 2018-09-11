@@ -172,8 +172,12 @@ describe('indexOf', () => {
     expect(d.indexOf('e', 4)).toEqual(4)
     expect(d.indexOf('f', 5)).toEqual(5)
 
-    expect(() => d.indexOf('a', 6)).toThrow(RangeError)
-    expect(() => d.indexOf('a', -1)).toThrow(RangeError)
+    expect(d.indexOf('a', 6)).toEqual(-1)
+    expect(d.indexOf('a', -1)).toEqual(-1)
+    expect(d.indexOf('a', -5)).toEqual(-1)
+    expect(d.indexOf('f', -1)).toEqual(5)
+    expect(d.indexOf('a', -6)).toEqual(0)
+    expect(d.indexOf('a', -10)).toEqual(0)
   })
 })
 
