@@ -158,6 +158,23 @@ describe('indexOf', () => {
     expect(d.indexOf('c')).toEqual(2)
     expect(d.indexOf('d')).toEqual(-1)
   })
+
+  it('should search from offset', () => {
+    const d = new Deque('abcdef')
+
+    expect(d.indexOf('a', 2)).toEqual(-1)
+    expect(d.indexOf('a', 1)).toEqual(-1)
+    expect(d.indexOf('a', 0)).toEqual(0)
+
+    expect(d.indexOf('b', 1)).toEqual(1)
+    expect(d.indexOf('c', 2)).toEqual(2)
+    expect(d.indexOf('d', 3)).toEqual(3)
+    expect(d.indexOf('e', 4)).toEqual(4)
+    expect(d.indexOf('f', 5)).toEqual(5)
+
+    expect(() => d.indexOf('a', 6)).toThrow(RangeError)
+    expect(() => d.indexOf('a', -1)).toThrow(RangeError)
+  })
 })
 
 describe('has', () => {
