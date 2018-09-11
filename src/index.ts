@@ -54,10 +54,12 @@ export class Deque<T> {
 
   extend(values: Iterable<T>) {
     for (const value of values) this.push(value)
+    return this
   }
 
   extendLeft(values: Iterable<T>) {
     for (const value of values) this.pushLeft(value)
+    return this
   }
 
   peek(index: number) {
@@ -169,6 +171,8 @@ export class Deque<T> {
       this.list[a] = this.list[b]
       this.list[b] = temp
     }
+
+    return this
   }
 
   rotate(n = 1) {
@@ -196,6 +200,8 @@ export class Deque<T> {
         this.list[b] = undefined
       }
     }
+
+    return this
   }
 
   *values() {
