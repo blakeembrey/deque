@@ -204,13 +204,21 @@ export class Deque<T> {
     return this
   }
 
-  *values() {
+  *entries(): IterableIterator<T> {
     const { head, size, list, mask } = this
 
     for (let i = 0; i < size; i++) yield list[(head + i) & mask]
   }
 
+  keys() {
+    return this.entries()
+  }
+
+  values() {
+    return this.entries()
+  }
+
   [Symbol.iterator]() {
-    return this.values()
+    return this.entries()
   }
 }

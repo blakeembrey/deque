@@ -8,11 +8,12 @@ describe('values', () => {
     expect(values).toEqual(Array.from('abc'))
   })
 
-  it('should support values method', () => {
+  it('should support `Set`-like iterable methods', () => {
     const d = new Deque('abc')
-    const values = Array.from(d.values())
 
-    expect(values).toEqual(Array.from('abc'))
+    expect(Array.from(d.entries())).toEqual(Array.from('abc'))
+    expect(Array.from(d.keys())).toEqual(Array.from('abc'))
+    expect(Array.from(d.values())).toEqual(Array.from('abc'))
   })
 })
 

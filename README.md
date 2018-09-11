@@ -30,19 +30,21 @@ npm install @blakeembrey/deque --save
 * `delete(i)` Delete the value at position `i`.
 * `reverse()` Reverse the elements of the deque in-place.
 * `rotate(n=1)` Rotate the deque `n` steps to the right.
+* `entries()` Return an iterable of deque.
+* `@@iterator()` Return an iterable of deque.
 
 ```js
 import { Deque } from '@blakeembrey/deque'
 
 const d = new Deque('ghi')
 
-for (const elem of d) {
-  console.log(elem.toUpperCase()) //=> G H I
+for (const value of d) {
+  console.log(value.toUpperCase()) //=> G H I
 }
 
 d.push('j')
 d.pushleft('f')
-d //=> deque(['f', 'g', 'h', 'i', 'j'])
+d //=> Deque(['f', 'g', 'h', 'i', 'j'])
 
 d.pop() //=> 'j'
 d.popleft() //=> 'f'
@@ -53,13 +55,17 @@ d.peek(0) //=> 'g'
 d.peek(-1) //=> 'i'
 
 d.extend('jkl')
-d //=> deque(['g', 'h', 'i', 'j', 'k', 'l'])
+d //=> Deque(['g', 'h', 'i', 'j', 'k', 'l'])
 
 d.rotate(1)
-d //=> deque(['l', 'g', 'h', 'i', 'j', 'k'])
+d //=> Deque(['l', 'g', 'h', 'i', 'j', 'k'])
 
 d.rotate(-1)
-d //=> deque(['g', 'h', 'i', 'j', 'k', 'l'])
+d //=> Deque(['g', 'h', 'i', 'j', 'k', 'l'])
+
+const d2 = new Deque(d)
+
+d2 //=> Deque(['g', 'h', 'i', 'j', 'k', 'l'])
 ```
 
 ## TypeScript
