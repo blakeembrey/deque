@@ -162,7 +162,7 @@ export class Deque<T> {
   }
 
   reverse() {
-    const { head, tail, size, list, mask } = this
+    const { head, tail, size, mask } = this
 
     for (let i = 0; i < ~~(size / 2); i++) {
       const a = (tail - i - 1) & mask
