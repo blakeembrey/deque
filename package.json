@@ -22,12 +22,13 @@
   },
   "keywords": [
     "deque",
-    "linked",
-    "list",
-    "double",
-    "endpoint",
+    "fifo",
+    "lifo",
     "queue",
     "stack",
+    "double",
+    "linked",
+    "list",
     "iterator",
     "iteration"
   ],
