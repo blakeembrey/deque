@@ -2,7 +2,7 @@ export class Deque<T> {
   private head = 0
   private tail = 0
   private mask = 1
-  private list = new Array(2)
+  private list = new Array<T | undefined>(2)
 
   constructor(values?: Iterable<T>) {
     if (values) this.extend(values)
@@ -28,7 +28,7 @@ export class Deque<T> {
 
     if (head === 0) return
 
-    const sorted: T[] = new Array(mask + 1)
+    const sorted: (T | undefined)[] = new Array(mask + 1)
     for (let i = 0; i < size; i++) sorted[i] = this.list[(head + i) & mask]
     this.list = sorted
   }
@@ -70,7 +70,7 @@ export class Deque<T> {
     }
 
     const pos = ((index >= 0 ? head : tail) + index) & this.mask
-    return list[pos]
+    return list[pos] as T
   }
 
   indexOf(needle: T, start = 0) {
@@ -121,7 +121,7 @@ export class Deque<T> {
     if (this.head === this.tail) throw new RangeError('pop from an empty deque')
 
     this.tail = (this.tail - 1) & this.mask
-    const value = this.list[this.tail]
+    const value = this.list[this.tail] as T
     this.list[this.tail] = undefined
     if (this.size < this.mask >>> 1) this._shrink()
     return value
@@ -130,7 +130,7 @@ export class Deque<T> {
   popLeft() {
     if (this.head === this.tail) throw new RangeError('pop from an empty deque')
 
-    const value = this.list[this.head]
+    const value = this.list[this.head] as T
     this.list[this.head] = undefined
     this.head = (this.head + 1) & this.mask
     if (this.size < this.mask >>> 1) this._shrink()
@@ -178,7 +178,7 @@ export class Deque<T> {
   rotate(n = 1) {
     const { head, tail } = this
 
-    if (n === 0 || head === tail) return
+    if (n === 0 || head === tail) return this
 
     this.head = (head - n) & this.mask
     this.tail = (tail - n) & this.mask
@@ -207,7 +207,7 @@ export class Deque<T> {
   *entries(): IterableIterator<T> {
     const { head, size, list, mask } = this
 
-    for (let i = 0; i < size; i++) yield list[(head + i) & mask]
+    for (let i = 0; i < size; i++) yield list[(head + i) & mask] as T
   }
 
   keys() {
