@@ -2,6 +2,7 @@ export class Deque<T> {
   private head = 0
   private tail = 0
   private mask = 1
+  private listCount = 0
   private list = new Array<T | undefined>(2)
 
   constructor(values?: Iterable<T>) {
@@ -37,6 +38,7 @@ export class Deque<T> {
     this.list[this.tail] = value
     this.tail = (this.tail + 1) & this.mask
     if (this.tail === this.head) this._grow()
+    this.listCount++
     return this
   }
 
@@ -44,12 +46,14 @@ export class Deque<T> {
     this.head = (this.head - 1) & this.mask
     this.list[this.head] = value
     if (this.head === this.tail) this._grow()
+    this.listCount++
     return this
   }
 
   clear() {
     this.head = 0
     this.tail = 0
+    this.listCount = 0
   }
 
   extend(values: Iterable<T>) {
@@ -110,6 +114,7 @@ export class Deque<T> {
 
     this.list[pos] = value
     if (this.head === this.tail) this._grow()
+    this.listCount++
     return this
   }
 
@@ -124,6 +129,7 @@ export class Deque<T> {
     const value = this.list[this.tail] as T
     this.list[this.tail] = undefined
     if (this.size < this.mask >>> 1) this._shrink()
+    this.listCount--
     return value
   }
 
@@ -134,6 +140,7 @@ export class Deque<T> {
     this.list[this.head] = undefined
     this.head = (this.head + 1) & this.mask
     if (this.size < this.mask >>> 1) this._shrink()
+    this.listCount--
     return value
   }
 
@@ -156,6 +163,7 @@ export class Deque<T> {
     this.tail = (this.tail - 1) & this.mask
 
     if (this.size < this.mask >>> 1) this._shrink()
+    this.listCount--
 
     return this
   }
@@ -216,6 +224,10 @@ export class Deque<T> {
 
   values() {
     return this.entries()
+  }
+
+  count() {
+    return this.listCount
   }
 
   [Symbol.iterator]() {

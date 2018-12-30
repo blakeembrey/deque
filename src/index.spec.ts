@@ -17,6 +17,33 @@ describe('values', () => {
   })
 })
 
+describe('count', () => {
+  it('count() should work as expected', () => {
+    const d = new Deque()
+    expect(d.count()).toEqual(0);
+    d.push('a')
+    expect(d.count()).toEqual(1);
+    d.push('b')
+    expect(d.count()).toEqual(2);
+    d.push('c')
+    expect(d.count()).toEqual(3);
+    d.pushLeft('d')
+    expect(d.count()).toEqual(4);
+    d.pushLeft('e')
+    expect(d.count()).toEqual(5);
+    d.pop()
+    expect(d.count()).toEqual(4);
+    d.popLeft()
+    expect(d.count()).toEqual(3);
+    d.clear()
+    expect(d.count()).toEqual(0);
+    d.extend(['a', 'b', 'c'])
+    expect(d.count()).toEqual(3);
+    d.extendLeft(['a', 'b', 'c'])
+    expect(d.count()).toEqual(6);
+  })
+})
+
 describe('push', () => {
   it('should push a value on the right', () => {
     const d = new Deque()
