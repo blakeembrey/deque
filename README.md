@@ -16,22 +16,23 @@ npm install @blakeembrey/deque --save
 
 ## Usage
 
-* `push(x)` Add `x` to right side of the deque.
-* `pushLeft(x)` Add `x` to the left side of the deque.
-* `clear()` Remove all elements from the deque leaving it with length 0.
-* `extend(iterable)` Extend the right side of the deque by appending elements from iterable.
-* `extendLeft(iterable)` Extend the left side of the deque by appending elements from iterable.
-* `peek(i)` Return the element at index `i` in the deque.
-* `indexOf(x, start?)` Return the position of `x` in the deque.
-* `has(x)` Return a boolean indicating whether `x` is in the deque.
-* `insert(i, x)` Insert `x` into the deque at position `i`.
-* `pop()` Remove and return an element from the right side of the deque. If no elements are present, throws `RangeError`.
-* `popLeft()` Return and return an element from the left side of the deque. If no elements are present, throws `RangeError`.
-* `delete(i)` Delete the value at position `i`.
-* `reverse()` Reverse the elements of the deque in-place.
-* `rotate(n=1)` Rotate the deque `n` steps to the right.
-* `entries()` Return an iterable of deque.
-* `@@iterator()` Return an iterable of deque.
+- `size` Returns the number of elements in the deque.
+- `push(x)` Add `x` to right side of the deque.
+- `pushLeft(x)` Add `x` to the left side of the deque.
+- `clear()` Remove all elements from the deque leaving it with length 0.
+- `extend(iterable)` Extend the right side of the deque by appending elements from iterable.
+- `extendLeft(iterable)` Extend the left side of the deque by appending elements from iterable.
+- `peek(i)` Return the element at index `i` in the deque.
+- `indexOf(x, start?)` Return the position of `x` in the deque.
+- `has(x)` Return a boolean indicating whether `x` is in the deque.
+- `insert(i, x)` Insert `x` into the deque at position `i`.
+- `pop()` Remove and return an element from the right side of the deque. If no elements are present, throws `RangeError`.
+- `popLeft()` Return and return an element from the left side of the deque. If no elements are present, throws `RangeError`.
+- `delete(i)` Delete the value at position `i`.
+- `reverse()` Reverse the elements of the deque in-place.
+- `rotate(n=1)` Rotate the deque `n` steps to the right.
+- `entries()` Return an iterable of deque.
+- `@@iterator()` Return an iterable of deque.
 
 ```js
 import { Deque } from '@blakeembrey/deque'
@@ -74,7 +75,7 @@ This project uses [TypeScript](https://github.com/Microsoft/TypeScript) and publ
 
 ## Reference
 
-Circular array implementation based on [`denque`](https://github.com/Salakar/denque).
+Circular array implementation originally based on [`denque`](https://github.com/Salakar/denque) with additional optimizations.
 
 ## License
 
