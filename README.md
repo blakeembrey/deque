@@ -44,11 +44,11 @@ for (const value of d) {
 }
 
 d.push('j')
-d.pushleft('f')
+d.pushLeft('f')
 d //=> Deque(['f', 'g', 'h', 'i', 'j'])
 
 d.pop() //=> 'j'
-d.popleft() //=> 'f'
+d.popLeft() //=> 'f'
 
 Array.from(d) //=> ['g', 'h', 'i']
 
