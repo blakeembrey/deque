@@ -14,7 +14,8 @@
     "build": "rimraf dist && tsc",
     "specs": "jest --coverage",
     "test": "npm run -s lint && npm run -s build && npm run -s specs",
-    "prepublish": "npm run build"
+    "prepare": "npm run build",
+    "benchmark": "ts-node benchmark/construct.ts && ts-node benchmark/rotate.ts"
   },
   "repository": {
     "type": "git",

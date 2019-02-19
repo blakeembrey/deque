@@ -8,27 +8,20 @@ export class Deque<T> {
     if (values) this.extend(values)
   }
 
-  private _grow() {
-    this._sort(this.list.length)
-    this.list.length *= 2
-    this.mask = (this.mask << 1) | 1
-  }
-
-  private _shrink() {
-    this._sort(this.size)
-    this.list.length /= 2
-    this.mask = this.mask >>> 1
-  }
-
-  private _sort(size: number) {
+  private _resize(size: number, length: number) {
     const { head, mask } = this
 
     this.head = 0
     this.tail = size
+    this.mask = length - 1
 
-    if (head === 0) return
+    // Optimize resize when list is already sorted.
+    if (head === 0) {
+      this.list.length = length
+      return
+    }
 
-    const sorted: (T | undefined)[] = new Array(mask + 1)
+    const sorted = new Array<T | undefined>(length)
     for (let i = 0; i < size; i++) sorted[i] = this.list[(head + i) & mask]
     this.list = sorted
   }
@@ -36,14 +29,14 @@ export class Deque<T> {
   push(value: T): this {
     this.list[this.tail] = value
     this.tail = (this.tail + 1) & this.mask
-    if (this.tail === this.head) this._grow()
+    if (this.head === this.tail) this._resize(this.list.length, this.list.length << 1)
     return this
   }
 
   pushLeft(value: T): this {
     this.head = (this.head - 1) & this.mask
     this.list[this.head] = value
-    if (this.head === this.tail) this._grow()
+    if (this.head === this.tail) this._resize(this.list.length, this.list.length << 1)
     return this
   }
 
@@ -109,7 +102,7 @@ export class Deque<T> {
     }
 
     this.list[pos] = value
-    if (this.head === this.tail) this._grow()
+    if (this.head === this.tail) this._resize(this.list.length, this.list.length << 1)
     return this
   }
 
@@ -123,7 +116,7 @@ export class Deque<T> {
     this.tail = (this.tail - 1) & this.mask
     const value = this.list[this.tail] as T
     this.list[this.tail] = undefined
-    if (this.size < this.mask >>> 1) this._shrink()
+    if (this.size < this.mask >>> 1) this._resize(this.size, this.list.length >>> 1)
     return value
   }
 
@@ -133,7 +126,7 @@ export class Deque<T> {
     const value = this.list[this.head] as T
     this.list[this.head] = undefined
     this.head = (this.head + 1) & this.mask
-    if (this.size < this.mask >>> 1) this._shrink()
+    if (this.size < this.mask >>> 1) this._resize(this.size, this.list.length >>> 1)
     return value
   }
 
@@ -155,7 +148,7 @@ export class Deque<T> {
     // Decrease tail position by 1.
     this.tail = (this.tail - 1) & this.mask
 
-    if (this.size < this.mask >>> 1) this._shrink()
+    if (this.size < this.mask >>> 1) this._resize(this.size, this.list.length >>> 1)
 
     return this
   }
